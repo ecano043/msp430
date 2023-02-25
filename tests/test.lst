@@ -1,0 +1,25 @@
+GAS LISTING test2.asm 			page 1
+
+
+   1               	#cdecls C,LIST,"msp430FR5739.h"
+   2               	
+   3               	        .text
+   4               	        .global reset
+   5               	
+   6               	reset:
+   7               	
+   8               	test_modes:
+   9 0000 3740 F9FF 	        mov     #-7, R7
+  10 0004 3540 F3FF 	        mov	#-13, R5	
+  11 0008 0594      	        cmp	R4, R5
+  12 000a 06F4      	        and	R4, R6
+  13 000c 08B7      	        bit	R7, R8
+  14 000e 012C      	        jc	mon
+  15 0010 057A      	        subc	R10, R5
+  16               	mon:
+  17 0012 3A40 0900 		mov	#0x9, R10
+  18               	
+  19               	        .section    ".reset_vector"
+  20 0000 0000      	        .word       reset
+  21               	
+  22               	        .end

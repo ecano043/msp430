@@ -1,0 +1,49 @@
+GAS LISTING test_disasm.asm 			page 1
+
+
+   1               	#cdecls C,LIST,"msp430FR5739.h"
+   2               	
+   3               	        .text
+   4               	        .global reset
+   5               	
+   6               	reset:
+   7               	
+   8               	test_modes:
+   9 0000 8410      	        swpb    r4
+  10 0002 9410 7B00 	        swpb    123(r4)
+  11 0006 A410      	        swpb    @r4
+  12 0008 B410      	        swpb    @r4+
+  13 000a 8411      	        sxt     r4
+  14 000c 9411 7B00 	        sxt     123(r4)
+  15 0010 A411      	        sxt     @r4
+  16 0012 B411      	        sxt     @r4+
+  17 0014 8412      	        call    r4
+  18 0016 9412 7B00 	        call    123(r4)
+  19 001a A412      	        call    @r4
+  20 001c B412      	        call    @r4+
+  21 001e 0013      	        reti
+  22 0020 0810      	        rrc     r8
+  23 0022 5810 7B00 	        rrc.b   123(r8)
+  24 0026 0810      	        rrc     r8
+  25 0028 0810      	        rrc     r8
+  26 002a 0811      	        rra     r8
+  27 002c 0811      	        rra     r8
+  28 002e 4811      	        rra.b   r8
+  29 0030 0812      	        push    r8
+  30 0032 4812      	        push.b  r8
+  31               	
+  32 0034 8020      	        jnz     256
+  33 0036 7F27      	        jz      -256
+  34 0038 8028      	        jnc     256
+  35 003a 102C      	        jc      32
+  36 003c EF33      	        jn      -32
+  37 003e 0134      	        jge     2
+  38 0040 FE3B      	        jl      -2
+  39 0042 003C      	        jmp     0
+  40               	
+  41 0044 0645      	        MOV     R5, R6
+  42               	
+  43               	        .section    ".reset_vector"
+  44 0000 0000      	        .word       reset
+  45               	
+  46               	        .end

@@ -1,0 +1,246 @@
+GAS LISTING test_modes.asm 			page 1
+
+
+   1               	#cdecls C,LIST,"msp430FR5739.h"
+   2               	
+   3               	        .text
+   4               	        .global reset
+   5               	
+   6               	reset:
+   7               	
+   8               	test_modes:
+   9               	;       rrc     r0      ; ERROR: No se puede rotar el PC - error de compilacion
+  10 0000 0110      	        rrc     r1
+  11 0002 0210      	        rrc     r2
+  12 0004 0310      	        rrc     r3
+  13 0006 0410      	        rrc     r4
+  14               	
+  15               	;       rrc.b   r0      ; ERROR: No se puede rotar el PC - error de compilacion
+  16 0008 4110      	        rrc.b   r1
+  17 000a 4210      	        rrc.b   r2
+  18 000c 4310      	        rrc.b   r3
+  19 000e 4410      	        rrc.b   r4
+  20               	
+  21               	;       rra     r0      ; ERROR: No se puede rotar el PC - error de compilacion
+  22 0010 0111      	        rra     r1
+  23 0012 0211      	        rra     r2
+  24 0014 0311      	        rra     r3
+  25 0016 0411      	        rra     r4
+  26               	
+  27               	;       rra.b   r0      ; ERROR: No se puede rotar el PC - error de compilacion
+  28 0018 4111      	        rra.b   r1
+  29 001a 4211      	        rra.b   r2
+  30 001c 4311      	        rra.b   r3
+  31 001e 4411      	        rra.b   r4
+  32               	
+  33 0020 0012      	        push    r0
+  34 0022 0112      	        push    r1
+  35 0024 0212      	        push    r2
+  36 0026 0312      	        push    r3
+  37 0028 0412      	        push    r4
+  38               	
+  39 002a 4012      	        push.b  r0
+  40 002c 4112      	        push.b  r1
+  41 002e 4212      	        push.b  r2
+  42 0030 4312      	        push.b  r3
+  43 0032 4412      	        push.b  r4
+  44               	
+  45               	;       rrc     0(r0)   ; Error: rrc: attempt to rotate the PC register
+  46 0034 1010 0200 	        rrc     2(r0)   ; Funciona!
+  47 0038 5010 0200 	        rrc.b   2(r0)
+  48               	;       rrc     6(r2)   ; Error: r2 should not be used in indexed addressing mode
+  49 003c 1310 1200 	        rrc     18(r3)
+  50               	;       rrc     @r0     ; Error: cannot use indirect addressing with the PC
+  51 0040 2110      	        rrc     @r1
+  52 0042 6210      	        rrc.b   @r2
+  53 0044 2310      	        rrc     @r3
+  54 0046 6410      	        rrc.b   @r4
+  55 0048 3110      	        rrc     @r1+
+  56 004a 3210      	        rrc     @r2+
+  57 004c 3310      	        rrc     @r3+
+GAS LISTING test_modes.asm 			page 2
+
+
+  58 004e 3410      	        rrc     @r4+
+  59               	
+  60 0050 1112 0500 	        push    5(r1)
+  61               	;       push    5(r2)   ; Error: r2 should not be used in indexed addressing mode
+  62 0054 1312 0500 	        push    5(r3)
+  63 0058 2212      	        push    @r2
+  64 005a 3212      	        push    @r2+
+  65 005c 2312      	        push    @r3
+  66 005e 3312      	        push    @r3+
+  67               	
+  68 0060 8010      	        swpb    r0
+  69 0062 8210      	        swpb    r2
+  70 0064 8310      	        swpb    r3
+  71 0066 8110      	        swpb    r1
+  72 0068 C510      	        swpb.b  r5
+  73               	
+  74               	;       swpb    5(r0)   ; Error: cannot use indirect addressing with the PC
+  75               	;       swpb    @r0     ; Error: cannot use indirect addressing with the PC
+  76               	
+  77 006a 8011      	        sxt     r0
+  78 006c 8111      	        sxt     r1
+  79 006e 8211      	        sxt     r2
+  80 0070 8311      	        sxt     r3
+  81 0072 8411      	        sxt     r4
+  82               	
+  83 0074 C411      	        sxt.b   r4
+  84 0076 9311 0C00 	        sxt     12(r3)
+  85 007a A311      	        sxt     @r3
+  86 007c A411      	        sxt     @r4
+  87 007e E411      	        sxt.b   @r4
+  88               	
+  89 0080 C212      	        call.b  2      ; Compiler error?
+  90 0082 9012 D204 	        call    1234
+  91 0086 B012 D204 	        call    #1234
+  92 008a 8512      	        call    r5
+  93 008c C512      	        call.b  r5
+  94 008e A612      	        call    @r6
+  95 0090 9212 D204 	        call    &1234
+  96               	
+  97 0094 0013      	        reti
+  98 0096 4013      	        reti.b
+  99               	
+ 100 0098 0440      	        mov     r0, r4
+ 101 009a 0441      	        mov     r1, r4
+ 102 009c 0442      	        mov     r2, r4
+ 103 009e 0443      	        mov     r3, r4
+ 104 00a0 0444      	        mov     r4, r4
+ 105 00a2 0443      	        mov     #0, r4
+ 106               	
+ 107 00a4 8543 7B00 	        mov     #0, 123(R5)
+ 108 00a8 B540 4101 	        mov     #321, 123(R5)
+ 108      7B00 
+ 109 00ae C543 7B00 	        mov.b   #0, 123(R5)
+ 110 00b2 F540 4101 	        mov.b   #321, 123(R5)   ; 321 > 1 byte
+ 110      7B00 
+ 111 00b8 8043 7B00 	        mov     #0, 123(R0)
+ 112 00bc B040 4101 	        mov     #321, 123(R0)
+GAS LISTING test_modes.asm 			page 3
+
+
+ 112      7B00 
+ 113               	
+ 114 00c2 8553 7B00 	        add     #0, 123(R5)
+ 115 00c6 B550 4101 	        add     #321, 123(R5)
+ 115      7B00 
+ 116 00cc C553 7B00 	        add.b   #0, 123(R5)
+ 117 00d0 F550 4101 	        add.b   #321, 123(R5)   ; 321 > 1 byte
+ 117      7B00 
+ 118 00d6 8053 7B00 	        add     #0, 123(R0)
+ 119 00da B050 4101 	        add     #321, 123(R0)
+ 119      7B00 
+ 120               	
+ 121 00e0 8563 7B00 	        addc    #0, 123(R5)
+ 122 00e4 B560 4101 	        addc    #321, 123(R5)
+ 122      7B00 
+ 123 00ea C563 7B00 	        addc.b  #0, 123(R5)
+ 124 00ee F560 4101 	        addc.b  #321, 123(R5)   ; 321 > 1 byte
+ 124      7B00 
+ 125 00f4 8063 7B00 	        addc    #0, 123(R0)
+ 126 00f8 B060 4101 	        addc    #321, 123(R0)
+ 126      7B00 
+ 127               	
+ 128 00fe 8583 7B00 	        sub     #0, 123(R5)
+ 129 0102 B580 4101 	        sub     #321, 123(R5)
+ 129      7B00 
+ 130 0108 C583 7B00 	        sub.b   #0, 123(R5)
+ 131 010c F580 4101 	        sub.b   #321, 123(R5)   ; 321 > 1 byte
+ 131      7B00 
+ 132 0112 8083 7B00 	        sub     #0, 123(R0)
+ 133 0116 B080 4101 	        sub     #321, 123(R0)
+ 133      7B00 
+ 134               	
+ 135 011c 8573 7B00 	        subc    #0, 123(R5)
+ 136 0120 B570 4101 	        subc    #321, 123(R5)
+ 136      7B00 
+ 137 0126 C573 7B00 	        subc.b  #0, 123(R5)
+ 138 012a F570 4101 	        subc.b  #321, 123(R5)   ; 321 > 1 byte
+ 138      7B00 
+ 139 0130 8073 7B00 	        subc    #0, 123(R0)
+ 140 0134 B070 4101 	        subc    #321, 123(R0)
+ 140      7B00 
+ 141               	
+ 142 013a 8593 7B00 	        cmp     #0, 123(R5)
+ 143 013e B590 4101 	        cmp     #321, 123(R5)
+ 143      7B00 
+ 144 0144 C593 7B00 	        cmp.b   #0, 123(R5)
+ 145 0148 F590 4101 	        cmp.b   #321, 123(R5)   ; 321 > 1 byte
+ 145      7B00 
+ 146 014e 8093 7B00 	        cmp     #0, 123(R0)
+ 147 0152 B090 4101 	        cmp     #321, 123(R0)
+ 147      7B00 
+ 148               	
+ 149 0158 85A3 7B00 	        dadd    #0, 123(R5)
+ 150 015c B5A0 4101 	        dadd    #321, 123(R5)
+ 150      7B00 
+ 151 0162 C5A3 7B00 	        dadd.b  #0, 123(R5)
+ 152 0166 F5A0 4101 	        dadd.b  #321, 123(R5)   ; 321 > 1 byte
+GAS LISTING test_modes.asm 			page 4
+
+
+ 152      7B00 
+ 153 016c 80A3 7B00 	        dadd    #0, 123(R0)
+ 154 0170 B0A0 4101 	        dadd    #321, 123(R0)
+ 154      7B00 
+ 155               	
+ 156 0176 85B3 7B00 	        bit     #0, 123(R5)
+ 157 017a B5B0 4101 	        bit     #321, 123(R5)
+ 157      7B00 
+ 158 0180 C5B3 7B00 	        bit.b   #0, 123(R5)
+ 159 0184 F5B0 4101 	        bit.b   #321, 123(R5)   ; 321 > 1 byte
+ 159      7B00 
+ 160 018a 80B3 7B00 	        bit     #0, 123(R0)
+ 161 018e B0B0 4101 	        bit     #321, 123(R0)
+ 161      7B00 
+ 162               	
+ 163 0194 85C3 7B00 	        bic     #0, 123(R5)
+ 164 0198 B5C0 4101 	        bic     #321, 123(R5)
+ 164      7B00 
+ 165 019e C5C3 7B00 	        bic.b   #0, 123(R5)
+ 166 01a2 F5C0 4101 	        bic.b   #321, 123(R5)   ; 321 > 1 byte
+ 166      7B00 
+ 167 01a8 80C3 7B00 	        bic     #0, 123(R0)
+ 168 01ac B0C0 4101 	        bic     #321, 123(R0)
+ 168      7B00 
+ 169               	
+ 170 01b2 85D3 7B00 	        bis     #0, 123(R5)
+ 171 01b6 B5D0 4101 	        bis     #321, 123(R5)
+ 171      7B00 
+ 172 01bc C5D3 7B00 	        bis.b   #0, 123(R5)
+ 173 01c0 F5D0 4101 	        bis.b   #321, 123(R5)   ; 321 > 1 byte
+ 173      7B00 
+ 174 01c6 80D3 7B00 	        bis     #0, 123(R0)
+ 175 01ca B0D0 4101 	        bis     #321, 123(R0)
+ 175      7B00 
+ 176               	
+ 177 01d0 85E3 7B00 	        xor     #0, 123(R5)
+ 178 01d4 B5E0 4101 	        xor     #321, 123(R5)
+ 178      7B00 
+ 179 01da C5E3 7B00 	        xor.b   #0, 123(R5)
+ 180 01de F5E0 4101 	        xor.b   #321, 123(R5)   ; 321 > 1 byte
+ 180      7B00 
+ 181 01e4 80E3 7B00 	        xor     #0, 123(R0)
+ 182 01e8 B0E0 4101 	        xor     #321, 123(R0)
+ 182      7B00 
+ 183               	
+ 184 01ee 85F3 7B00 	        and     #0, 123(R5)
+ 185 01f2 B5F0 4101 	        and     #321, 123(R5)
+ 185      7B00 
+ 186 01f8 C5F3 7B00 	        and.b   #0, 123(R5)
+ 187 01fc F5F0 4101 	        and.b   #321, 123(R5)   ; 321 > 1 byte
+ 187      7B00 
+ 188 0202 80F3 7B00 	        and     #0, 123(R0)
+ 189 0206 B0F0 4101 	        and     #321, 123(R0)
+ 189      7B00 
+ 190               	
+ 191               	
+ 192               	        .section    ".reset_vector"
+GAS LISTING test_modes.asm 			page 5
+
+
+ 193 0000 0000      	        .word       reset
+ 194               	
+ 195               	        .end

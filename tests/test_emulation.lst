@@ -1,0 +1,18 @@
+GAS LISTING test_emulation.asm 			page 1
+
+
+   1               	#cdecls C,LIST,"msp430FR5739.h"
+   2               	
+   3               	        .text
+   4               	        .global reset
+   5               	
+   6               	reset:
+   7               	
+   8               	test_emulation:
+   9 0000 3540 3412 	        mov     #0x1234, r5
+  10 0004 35F0 FF00 	        and     #0x00ff, r5
+  11               	
+  12               	        .section    ".reset_vector"
+  13 0000 0000      	        .word       reset
+  14               	
+  15               	        .end
