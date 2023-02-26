@@ -34,7 +34,7 @@ TEST_OUTPUT_FILE = "tests/test_output.hex"
 class Memory_area:
     def __init__(self, base, size, kind):
         self.base, self.size, self.kind = base, size, kind
-        self.mem = [None] * self.size
+        self.mem = [None] * self.size # Inicializo toda la memoria con None
 
 
     def get_size(self):
@@ -46,11 +46,14 @@ class Memory_area:
 
 
     def initialized(self, addr):
+        """
+        Retorna true si está inicializada
+        """
         return self.mem[addr - self.base] != None
 
 
     def read(self, addr, check_initialized = True):
-        assert (addr - self.base) < self.size
+        assert (addr - self.base) < self.size # si es false, se lanza excepción
         if check_initialized:
             assert self.initialized(addr)
 
@@ -59,7 +62,7 @@ class Memory_area:
 
     def read_word(self, addr, check_initialized = True):
         assert (addr - self.base) < self.size    # Rango direccion correcto?
-        assert (addr % 2) == 0                   # Direccion debe ser par
+        assert (addr % 2) == 0                   # Direccion debe ser par, porque es word
         if check_initialized:
             assert self.initialized(addr)        # Contenido inicializado?
             assert self.initialized(addr+1)      # Contenido inicializado?
@@ -172,7 +175,7 @@ class Memory:
 
     def read_word(self, addr, check_initialized = True):
         id = self.locate_area(addr)
-        assert id != None
+        assert id != None # assertion si es None
         return self.areas[id].read_word(addr, check_initialized)
 
 

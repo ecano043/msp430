@@ -3,7 +3,7 @@
 #
 #  msp_gui.py
 #
-#  Copyright 2020 Roberto Leonel Pacha <rpacha731@alumnos.iua.edu.ar>
+#  Copyright 2023 Eliana Victoria Cano <ecano043@alumnos.iua.edu.ar>
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -42,8 +42,6 @@ memory.reserve("RAM", 0x1c00, 1024, "RW")
 mspEMU = MSP430_emulator(memory)
 mspDIS = MSP430_disassembler(memory)
 mspASS = MSP430_assembler(memory)
-ejecutar = True
-
 
 class MainMenu(Gtk.MenuBar):
     def __init__(self, toplevel):
@@ -77,7 +75,7 @@ class MainMenu(Gtk.MenuBar):
                               program_name = MAIN_TITLE,
                               logo = logo,
                               license_type = Gtk.License.GPL_3_0,
-                              authors = ["Roberto Leonel Pacha"])
+                              authors = ["Eliana Victoria Cano"])
         dlg.set_transient_for(self.toplevel)
         dlg.run()
         dlg.destroy()
@@ -87,6 +85,7 @@ class Emulator(Gtk.Frame):
     def __init__(self, toplevel):
         self.toplevel = toplevel
         super(Emulator, self).__init__()
+        self.ejecutar = True
 
         self.fixed = Gtk.Fixed()
 
@@ -107,8 +106,8 @@ class Emulator(Gtk.Frame):
         self.fixed.put(self.tools, 5, 0)
         self.fixed.put(self.emu_view, 5, 65)
         self.fixed.put(self.reg_view, 5, 515)
-        self.fixed.put(self.flags_view, 520, 0)
-        self.fixed.put(self.mem_view, 710, 0)
+        self.fixed.put(self.flags_view, 640, 0)
+        self.fixed.put(self.mem_view, 830, 0)
         self.fixed.put(self.file_intel, 200, 696)
         self.fixed.put(self.modify_reg, 5, 700)
         self.fixed.put(self.save_regs, 470, 696)
@@ -210,23 +209,23 @@ class Emulator(Gtk.Frame):
         sep = Gtk.VSeparator()
 
         gridRAM = Gtk.Grid(row_spacing = 5,
-                           column_spacing = 5)
+                           column_spacing = 10)
         
-        gridROM = Gtk.Grid(row_spacing = 5,
-                           column_spacing = 5)
+        #gridROM = Gtk.Grid(row_spacing = 5,
+        #                   column_spacing = 5)
         
         lblRAM = Gtk.Label(label = "MEMORIA RAM")
         lblRAM.set_markup('<span foreground="red"><u>MEMORIA RAM</u></span>')
-        gridRAM.attach(lblRAM, 1, 0, 1, 1)
-        lblROM = Gtk.Label(label = "MEMORIA ROM")
-        lblROM.set_markup('<span foreground="red"><u>MEMORIA ROM</u></span>')
-        gridROM.attach(lblROM, 1, 0, 1, 1)
+        gridRAM.attach(lblRAM, 1, 0, 2, 1)
+        #lblROM = Gtk.Label(label = "MEMORIA ROM")
+        #lblROM.set_markup('<span foreground="red"><u>MEMORIA ROM</u></span>')
+        #gridROM.attach(lblROM, 1, 0, 1, 1)
 
         self.cellRAM = [Gtk.Label(label = "- - - -") for _ in range(513)]
-        self.cellROM = [Gtk.Label(label = "- - - -") for _ in range(513)]
+        #self.cellROM = [Gtk.Label(label = "- - - -") for _ in range(513)]
 
-        baseROM = mspEMU.memory.areas["ROM"].base
-        baseRAM = mspEMU.memory.areas["RAM"].base
+        #baseROM = mspEMU.memory.areas["ROM"].base
+        baseRAM = mspEMU.memory.areas["ROM"].base
 
         for g in range(512):
             lbl = Gtk.Label(label = "{:04x}".format(baseRAM))
@@ -234,28 +233,28 @@ class Emulator(Gtk.Frame):
             gridRAM.attach(lbl, 0, g + 1, 1, 1)
             gridRAM.attach(self.cellRAM[g], 1, g + 1, 1, 1)
 
-        for g in range(512):
-            lbl = Gtk.Label(label = "{:04x}".format(baseROM))
-            baseROM += 2
-            gridROM.attach(lbl, 0, g + 1, 1, 1)
-            gridROM.attach(self.cellROM[g], 1, g + 1, 1, 1)        
+        # for g in range(512):
+        #     lbl = Gtk.Label(label = "{:04x}".format(baseROM))
+        #     baseROM += 2
+        #     gridROM.attach(lbl, 0, g + 1, 1, 1)
+        #     gridROM.attach(self.cellROM[g], 1, g + 1, 1, 1)
 
         grid.attach(gridRAM, 0, 0, 1, 1)
         grid.attach(sep, 1, 0, 1, 1)
-        grid.attach(gridROM, 2, 0, 1, 1)
+        #grid.attach(gridROM, 2, 0, 1, 1)
         self.refresh_memory()
         frame.add(scroller)
-        frame.set_size_request(305, 515)
+        frame.set_size_request(180, 515)
 
         return frame
 
 
     def refresh_memory(self):
         s = mspEMU.memory.dump_mem("ROM").split(",")
-        for i in range(len(s)):
-            self.cellROM[i].set_properties(label = s[i])
+        # for i in range(len(s)):
+        #     self.cellROM[i].set_properties(label = s[i])
 
-        e = mspEMU.memory.dump_mem("RAM").split(",")
+        e = mspEMU.memory.dump_mem("ROM").split(",")
         for i in range(len(e)):
             self.cellRAM[i].set_properties(label = e[i])
 
@@ -337,7 +336,7 @@ class Emulator(Gtk.Frame):
         scroller = Gtk.ScrolledWindow()
         scroller.add(self.emu_viewer)
         frame.add(scroller)
-        frame.set_size_request(505, 450)
+        frame.set_size_request(620, 450)
 
         return frame
 
@@ -354,44 +353,64 @@ class Emulator(Gtk.Frame):
 
 
     def on_step(self, btn):
+        """
+        Ejecuta una instrucción
+        """
         regs = mspEMU.registers
-        esc = int(self.escala.get_value())
+        esc = int(self.escala.get_value()) # cantidad de pasos
         for _ in range(esc):
             addr, s = mspDIS.disassemble_one(regs.get_reg(regs.PC))
+            if (memory.initialized(addr)):
+                mspEMU.single_step()
+                self.refresh_regs()
+                self.emulator_add_text(s + "\n")
+            else:
+                print("No hay más instrucciones en la memoria")
+                break
+    def on_pause(self, btn):
+        self.ejecutar = False
+        print("Ejecución pausada")
+
+    def on_run(self, btn):
+        """
+        Ejecuta todas las instrucciones
+        """
+        self.ejecutar = True
+
+        while self.ejecutar:
+            if not self.ejec():
+                break
+
+            if self.ejecutar is False:
+                break
+
+    def ejec(self):
+        """
+        Ejecuta una instrucción leída de la memoria
+        """
+        if self.ejecutar is False:
+            return
+        regs = mspEMU.registers
+        addr, s = mspDIS.disassemble_one(regs.get_reg(regs.PC))
+
+        if (memory.initialized(addr)):
             mspEMU.single_step()
             self.refresh_regs()
             self.emulator_add_text(s + "\n")
-        # time.sleep(1)
 
-
-    def on_pause(self, btn):
-        ejecutar = False
-
-
-    def on_run(self, btn):
-        # hilo = threading.Thread(target=self.ejec, daemon=True)
-        # hilo.start()
-        while ejecutar:
-            self.ejec()
-            
-            if ejecutar is False:
-                break
-
-
-    def ejec(self):
-        regs = mspEMU.registers
-        addr, s = mspDIS.disassemble_one(regs.get_reg(regs.PC))
-        mspEMU.single_step()
-        self.refresh_regs()
-        self.emulator_add_text(s + "\n")
-        time.sleep(1)
-
+            while Gtk.events_pending(): Gtk.main_iteration()
+            time.sleep(1)
+            return True
+        else:
+            print("Fin de ejecución.")
+            return False
 
     def on_reset(self, btn):
         regs = mspEMU.registers
         ram = memory.areas["RAM"]
-        regs.set_reg(regs.PC, memory.read_word(0xfffe))
+        regs.set_reg(regs.PC, memory.read_word(0xfffe)) # Pone el PC en la dirección inicial
         regs.set_reg(regs.SP, (ram.base + ram.size))
+        self.refresh_regs()
         self.emulator_clear_text()
         self.escala.set_value(0)
 
@@ -401,14 +420,15 @@ class Emulator(Gtk.Frame):
         ram = memory.areas["RAM"]
         regs.set_reg(regs.PC, memory.read_word(0xfffe))
         regs.set_reg(regs.SP, (ram.base + ram.size))
+        self.refresh_regs()
         self.emulator_clear_text()
         self.escala.set_value(0)
 
 
     def on_stop(self, btn):
+        self.ejecutar = False
+        print("Ejecución detenidaa")
         self.reset()
-
-
 
 class MainWindow(Gtk.Window):
     def __init__(self):
@@ -503,6 +523,7 @@ class MainWindow(Gtk.Window):
 
         if fc.run() == Gtk.ResponseType.OK:
             fname = fc.get_filename()
+            print("Archivo elegido: " + fname)
             with open(fname) as infile:
                 text = infile.read()
             self.edit_buffer.set_text(text)

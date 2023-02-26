@@ -13,8 +13,10 @@ test_modes:
         bit	R7, R8
         jc	mon
         subc	R10, R5
+        and	R7, R6
 mon:
 	mov	#0x9, R10
+	ret
 
         .section    ".reset_vector"
         .word       reset
